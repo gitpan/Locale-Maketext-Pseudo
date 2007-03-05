@@ -1,5 +1,8 @@
 Revision history for Locale-Maketext-Pseudo
 
+0.0.2  Sun Mar  4 12:02:06 2007
+	   - added env_maketext() and friends functions
+	
 0.0.1  Sat Feb 24 17:33:06 2007
        Initial release.
 

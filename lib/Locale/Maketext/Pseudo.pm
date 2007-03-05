@@ -3,10 +3,59 @@ package Locale::Maketext::Pseudo;
 use warnings;
 use strict;
 
-use version; our $VERSION = qv('0.0.1');
+use version; our $VERSION = qv('0.0.2');
+use base 'Exporter';
+our @EXPORT_OK = qw(env_maketext env_print env_fetch env_say env_get);
 
 sub new {
-    return bless {}, shift;
+    my($class, $args_ref) = @_;
+    my $self = bless {}, $class;
+    $ENV{'maketext_obj'} = $self if !$args_ref->{'skip_env'};
+    return $self;
+}
+
+sub env_maketext {
+    my ($string, @args) = @_;
+    
+    my $needs_elp = 1;
+    if( exists $ENV{'maketext_obj'} ) {
+        if( $ENV{'maketext_obj'} ) {
+            if( $ENV{'maketext_obj'}->can('maketext') ) {
+                $string = $ENV{'maketext_obj'}->maketext( $string, @args );
+                $needs_elp = 0;
+            }
+        }
+    }    
+    
+    if( $needs_elp ) {
+        require Local::Maketext::Pseudo;
+        Local::Maketext::Pseudo->new({ 
+            'skip_env' => $ENV{'maketext_obj_skip_env'} 
+        })->maketext( $string, @args );
+    }
+    
+    return $string;
+}
+
+sub env_print {
+    print env_maketext(@_);
+}       
+
+sub env_fetch { 
+    return env_maketext(@_); 
+}               
+                    
+sub env_say {           
+    my $text = env_maketext(@_);
+    local $/ = !defined $/ || !$/ ? "\n" : $/; # otherwise assume they are not stupid
+    print $text . $/ if $text;
+}
+    
+sub env_get {
+    my $text = env_maketext(@_);
+    local $/ = !defined $/ || !$/ ? "\n" : $/; # otherwise assume they are not stupid
+    return $text . $/ if $text;
+    return;             
 }
 
 sub maketext {
@@ -51,7 +100,7 @@ Locale::Maketext::Pseudo - give localized code a pseudo language obj if a real o
 
 =head1 VERSION
 
-This document describes Locale::Maketext::Pseudo version 0.0.1
+This document describes Locale::Maketext::Pseudo version 0.0.2
 
 
 =head1 SYNOPSIS
@@ -87,6 +136,38 @@ You fallback to a Pseudo object so that the calls to maketext() (or say(), get()
 
 
 =head1 INTERFACE 
+
+=head2 FUNCTIONS
+
+All are exportable, each takes the same args as the method of the same name (sans 'env_') 
+and each uses $ENV{'maketext_obj'} if valid or it uses a L<Local::Maketext::Pseudo> object.
+
+=over 4
+
+=item env_maketext()
+
+This will use $ENV{'maketext_obj'} if it can maketext, otherwise it uses the Pseudo method.
+
+This is useful for languagifying, say, a module's carp()'ed errors without the module needing to know anythgin about the callers' langauge situation.
+
+    local $ENV{'maketext_obj'} = MyLocale::Maketext::Utils->get_handle(@whatever) || '';
+    use Locale::Maketext::Pseudo qw(env_maketext);
+    
+    my $obj = Fiddle->new({'lang_obj' => $ENV{'maketext_obj'} }); # now object uses same thing as function, see "OBJECT ORIENTED" below...  
+    carp env_maketext('....', @whatever) if !$whatever;
+
+=item env_fetch()
+
+=item env_print()
+
+=item env_get()
+
+=item env_say()
+
+=back
+
+
+=head2 OBJECT ORIENTED
 
 =over
 
@@ -126,8 +207,10 @@ Throws no warnings or exceptions of its own.
 
 
 =head1 CONFIGURATION AND ENVIRONMENT
-  
-Locale::Maketext::Pseudo requires no configuration files or environment variables.
+
+Locale::Maketext::Pseudo requires no configuration files and the foloowing environment variables:
+
+$ENV{'maketext_obj'} gets set to the language object on initialization ( for functions to use, see "FUNCTIONS" above ) unless the 'skip_env' key is tru in new()'s hashref argument.
 
 
 =head1 DEPENDENCIES
