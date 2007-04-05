@@ -3,7 +3,7 @@ package Locale::Maketext::Pseudo;
 use warnings;
 use strict;
 
-use version; our $VERSION = qv('0.0.2');
+use version; our $VERSION = qv('0.0.3');
 use base 'Exporter';
 our @EXPORT_OK = qw(env_maketext env_print env_fetch env_say env_get);
 
@@ -62,7 +62,7 @@ sub maketext {
     my ($fake, $string, @args) = @_;
 
     for my $idx ( 1 .. scalar(@args)) {
-        $string =~ s{ \[ $idx \] }{$args[ $idx - 1]}xmsg;
+        $string =~ s{ \[ [_]( [-]?$idx ) \] }{$args[ substr($1, 0, 1) eq '-' ? $1 : ($1 - 1) ]}xmsg;
     }
 
     return $string;
@@ -100,7 +100,7 @@ Locale::Maketext::Pseudo - give localized code a pseudo language obj if a real o
 
 =head1 VERSION
 
-This document describes Locale::Maketext::Pseudo version 0.0.2
+This document describes Locale::Maketext::Pseudo version 0.0.3
 
 
 =head1 SYNOPSIS
@@ -222,6 +222,7 @@ None.
 
 None reported.
 
+Special bracket notation for methods like '[quant,_1,file,files,No files] matched your query.' are simply left as is.
 
 =head1 BUGS AND LIMITATIONS
 

@@ -1,5 +1,9 @@
 Revision history for Locale-Maketext-Pseudo
 
+0.0.3  Thu Apr  5 23:32:06 2007
+       - Fixed mis parse 
+       - added note about special bracket notation for functions/methods being left as is
+
 0.0.2  Sun Mar  4 12:02:06 2007
 	   - added env_maketext() and friends functions
 	

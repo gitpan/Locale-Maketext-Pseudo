@@ -1,4 +1,6 @@
-use Test::More tests => 6;
+use Test::More tests => 7;
+
+use lib '../lib', 't';
 
 BEGIN {
 use_ok( 'Locale::Maketext::Pseudo' );
@@ -10,21 +12,26 @@ my $fake = Locale::Maketext::Pseudo->new();
 ok( ref $fake eq 'Locale::Maketext::Pseudo', 'new() object');
 
 ok(
-    $fake->maketext('Hello [1], I am [2]', 'World', 'Dan')  eq 'Hello World, I am Dan', 
+    $fake->maketext('Hello [_1], I am [_2]', 'World', 'Dan')  eq 'Hello World, I am Dan', 
     'maketext() interpolation in order'
 );
 
 ok(
-    $fake->maketext('[2]: Hello [1], I am [2]', 'World', 'Dan')  eq 'Dan: Hello World, I am Dan', 
+    $fake->maketext('[_2]: Hello [_1], I am [_2]', 'World', 'Dan')  eq 'Dan: Hello World, I am Dan', 
     'maketext() interpolation in order - multi'
 );
 
 ok(
-    $fake->maketext('Hello [2], I am [1]', 'World', 'Dan')  eq 'Hello Dan, I am World', 
+    $fake->maketext('Hello [_2], I am [_1]', 'World', 'Dan')  eq 'Hello Dan, I am World', 
     'maketext() interpolation out of order'
 );
 
 ok(
-    $fake->maketext('[1]: Hello [2], I am [1]', 'World', 'Dan')  eq 'World: Hello Dan, I am World', 
+    $fake->maketext('[_1]: Hello [_2], I am [_1]', 'World', 'Dan')  eq 'World: Hello Dan, I am World', 
     'maketext() interpolation out of order - multi'
+);
+
+ok(
+	$fake->maketext('[_-1]: Hello [_-2], I am [_1]', 'World', 'Dan') eq 'Dan: Hello World, I am World',
+    'negative indexes'	
 );
