@@ -3,7 +3,7 @@ package Locale::Maketext::Pseudo;
 use warnings;
 use strict;
 
-use version; our $VERSION = qv('0.0.4');
+use version; our $VERSION = qv('0.0.5');
 use base 'Exporter';
 our @EXPORT_OK = qw(env_maketext env_print env_fetch env_say env_get);
 
@@ -100,7 +100,7 @@ Locale::Maketext::Pseudo - give localized code a pseudo language obj if a real o
 
 =head1 VERSION
 
-This document describes Locale::Maketext::Pseudo version 0.0.4
+This document describes Locale::Maketext::Pseudo version 0.0.5
 
 
 =head1 SYNOPSIS
