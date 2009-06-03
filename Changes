@@ -1,7 +1,10 @@
 Revision history for Locale-Maketext-Pseudo
 
+0.6    Wed Jun  3 16:01:29 2009
+    - remove use of version or base
+
 0.0.5  Tue Jan 29 13:03:31 2008
-       bumped version so could reupload to cpan after it was removed
+       bumped version so we could reupload to cpan after it was removed
        
 0.0.4  Sat Sep 29 16:38:29 2007
 		Made perlcritic test optional as per http://rt.cpan.org/Ticket/Display.html?id=29554#txn-364766
